@@ -1,9 +1,19 @@
-function LoginPage() {
+import styled from "styled-components";
+import LoginForm from "../../components/auth/LoginForm";
+
+
+export default function LoginPage() {
     return (
-        <div>
-            
-        </div>
+        <Container>
+            <LoginForm />
+        </Container>
     );
 }
 
-export default LoginPage;
+const Container = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+`

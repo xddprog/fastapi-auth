@@ -34,8 +34,8 @@ async def get_current_user_dependency(
     request: Request
 ):
     token = request.cookies.get('access_token')
-    data, is_telegram = await auth_service.verify_token(token)
-    return await auth_service.check_user_exist(data, is_telegram)
+    data = await auth_service.verify_token(token)
+    return await auth_service.check_user_exist(data)
 
 
 async def get_user_service(session=Depends(get_session)):

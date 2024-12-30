@@ -19,7 +19,6 @@ class JwtConfig(BaseModel):
     JWT_ALGORITHM: str
     JWT_ACCESS_TOKEN_TIME: int
     JWT_REFRESH_TOKEN_TIME: int
-    BOT_TOKEN: str
 
 
 class RedisConfig(BaseModel):
@@ -42,8 +41,7 @@ def load_jwt_config() -> JwtConfig:
         JWT_SECRET=env.str("JWT_SECRET"),
         JWT_ALGORITHM=env.str("JWT_ALGORITHM"),
         JWT_ACCESS_TOKEN_TIME=env.int("JWT_ACCESS_TOKEN_TIME"),
-        JWT_REFRESH_TOKEN_TIME=env.int("JWT_REFRESH_TOKEN_TIME"),
-        BOT_TOKEN=env.str("BOT_TOKEN"),
+        JWT_REFRESH_TOKEN_TIME=env.int("JWT_REFRESH_TOKEN_TIME")
     )
 
 
@@ -52,3 +50,4 @@ def load_redis_config() -> RedisConfig:
         REDIS_HOST=env.str("REDIS_HOST"),
         REDIS_PORT=env.int("REDIS_PORT"),
     )
+
