@@ -68,7 +68,7 @@ class AuthService(BaseService):
             algorithm=self.__config.JWT_ALGORITHM
         )
 
-    async def verify_token(self, token: str) -> tuple[str, bool]:
+    async def verify_token(self, token: str) -> str:
         if not token:
             raise InvalidToken
         try:

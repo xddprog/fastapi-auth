@@ -41,8 +41,8 @@ async def refresh_token(
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     refresh_token = request.cookies.get("refresh_token")
-    email_or_tg_id, _ = await auth_service.verify_token(refresh_token)
-    access_token = await auth_service.create_access_token(email_or_tg_id)
+    email = await auth_service.verify_token(refresh_token)
+    access_token = await auth_service.create_access_token(email)
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     
 

@@ -2,40 +2,48 @@ import { Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-export default function OauthServicesGroup() {
+
+interface ComponentProps {
+    isRegisterForm: boolean
+}
+
+
+export default function OauthServicesGroup ({isRegisterForm}: ComponentProps): JSX.Element {
     const navigate = useNavigate();
 
     return (
         <ButtonsContiner>
             <StyledButton type="primary" htmlType="submit">
-                Войти
+                {!isRegisterForm ? "Войти": "Зарегистрироваться"}
             </StyledButton>
             <ButtonsGrid>
                 <StyledButton>
                     <StyledLinkButtonImage src="/public/social/yandex.png" />
-                    Войти c Yandex 
+                    {!isRegisterForm ? "Войти": "Регистрация"} c Yandex 
                 </StyledButton>
                 <StyledButton>
                     <StyledLinkButtonImage src="/public/social/vk.png" />
-                    Войти c VK 
+                    {!isRegisterForm ? "Войти": "Регистрация"} c VK 
                 </StyledButton>
                 <StyledButton>
                     <StyledLinkButtonImage src="/public/social/github.png" />
-                    Войти c Github 
+                    {!isRegisterForm ? "Войти": "Регистрация"} c Github 
                 </StyledButton>
                 <StyledButton>
                     <StyledLinkButtonImage src="/public/social/telegram.png" />
-                    Войти c Telegram 
+                    {!isRegisterForm ? "Войти": "Регистрация"} c Telegram 
                 </StyledButton>
             </ButtonsGrid>
             <LinksContainer>
                 <LinksContinerItem>
                     <Typography.Paragraph style={{margin: 0}}>Забыли пароль?</Typography.Paragraph>
-                    <a>Восстановить</a>
+                    {isRegisterForm ? <a>Восстановить</a>: null}
                 </LinksContinerItem>
                 <LinksContinerItem>
-                    <Typography.Paragraph>Нет аккаунта?</Typography.Paragraph>
-                    <a>Зарегистрироваться</a>
+                    <Typography.Paragraph>{!isRegisterForm ? "Нет аккаунта?": "Есть аккаунт?"}</Typography.Paragraph>
+                    <a onClick={() => navigate(isRegisterForm ? "/login": "/register")}>
+                        {isRegisterForm ? "Войти": "Зарегистрироваться"}
+                    </a>
                 </LinksContinerItem>
             </LinksContainer>
         </ButtonsContiner>

@@ -4,19 +4,21 @@ import styled from "styled-components";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthServicesGroup from "./OauthServicesGroup";
 import AuthService from "../../api/services/authService";
+import { RegisterUserInterface } from "../../schemas/auth";
 
-export default function LoginForm() {
-    const [form] = useForm();
+
+export default function RegisterForm() {
+    const [form] = useForm<RegisterUserInterface>();
     const [, contextHolder] = message.useMessage();
 
     async function onFinish() {
-        await AuthService.loginUser(await form.validateFields());
+        await AuthService.registerUser(await form.validateFields());
     }
 
     return (
         <FormContainer>
             {contextHolder}
-            <Typography.Title level={1}>Вход в аккаунт</Typography.Title>
+            <Typography.Title level={1}>Регистрация</Typography.Title>
             <StyledForm
                 name="normal_login"
                 initialValues={{
@@ -25,6 +27,18 @@ export default function LoginForm() {
                 onFinish={onFinish}
                 form={form}
             >
+                <Form.Item
+                    name="username"
+                    hasFeedback
+                    rules={[
+                        {
+                            required: true,
+                            message: "Пожалуйста, введите свой никнейм!",
+                        },
+                    ]}
+                >
+                    <Input prefix={<MailOutlined />} placeholder="Username" />
+                </Form.Item>
                 <Form.Item
                     name="email"
                     hasFeedback
@@ -50,13 +64,13 @@ export default function LoginForm() {
                 >
                     <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" />
                 </Form.Item>
-                <OauthServicesGroup isRegisterForm={false} />
+                <OauthServicesGroup isRegisterForm={true}/>
             </StyledForm>
         </FormContainer>
     );
 }
 
-const StyledForm = styled(Form)`
+const StyledForm = styled(Form<RegisterUserInterface>)`
     width: 100%;
     margin-bottom: 10px;
 `;
@@ -67,6 +81,6 @@ const FormContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 400px;
+    width: 420px;
 `;
 
