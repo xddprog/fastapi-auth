@@ -18,7 +18,7 @@ app = FastAPI(lifespan=lifespan)
 PROTECTED = Depends(get_current_user_dependency)
 
 
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:5173", "https://d6af-176-124-206-69.ngrok-free.app"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

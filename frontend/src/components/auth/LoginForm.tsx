@@ -4,8 +4,15 @@ import styled from "styled-components";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthServicesGroup from "./OauthServicesGroup";
 import AuthService from "../../api/services/authService";
+import { BaseUserInterface } from "../../schemas/user";
 
-export default function LoginForm() {
+
+interface ComponentProps {
+    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+}
+
+
+export default function LoginForm({setUser}: ComponentProps) {
     const [form] = useForm();
     const [, contextHolder] = message.useMessage();
 
@@ -36,7 +43,7 @@ export default function LoginForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<MailOutlined />} type="email" placeholder="Почта" />
+                    <Input prefix={<MailOutlined />} type="email" placeholder="Почта" size="large" />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -48,7 +55,7 @@ export default function LoginForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" />
+                    <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" size="large" />
                 </Form.Item>
                 <OauthServicesGroup isRegisterForm={false} />
             </StyledForm>

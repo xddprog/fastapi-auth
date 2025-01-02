@@ -5,13 +5,25 @@ import { axiosClient } from "../client/axiosClient";
 
 
 export default class AuthService {
-    static BASE_URL = "/auth";
+    public BASE_URL = "/auth";
 
-    static async loginUser(loginData: LoginUserInterface): Promise<AxiosResponse> {
+    public async loginUser(loginData: LoginUserInterface): Promise<AxiosResponse> {
         return axiosClient.post(`${this.BASE_URL}/login`, loginData);
     }
 
-    static async registerUser(registerData: RegisterUserInterface): Promise<AxiosResponse> {
+    public async registerUser(registerData: RegisterUserInterface): Promise<AxiosResponse> {
         return axiosClient.post(`${this.BASE_URL}/register`, registerData);
+    }
+
+    public async authWithGithub(code: string): Promise<AxiosResponse> {
+        return axiosClient.post(`${this.BASE_URL}/github`, {}, {params: {code: code}});
+    }
+
+    public async authWithVk(code: string): Promise<AxiosResponse> {
+        return axiosClient.post(`${this.BASE_URL}/vk`, {}, {params: {code: code}});
+    }
+
+    public async authWithYandex(code: string): Promise<AxiosResponse> {
+        return axiosClient.post(`${this.BASE_URL}/yandex`, {}, {params: {access_token: code}});
     }
 }

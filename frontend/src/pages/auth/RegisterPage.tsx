@@ -1,10 +1,15 @@
 import styled from "styled-components"
 import RegisterForm from "../../components/auth/RegisterForm"
+import { BaseUserInterface } from "../../schemas/user"
 
-export default function RegisterPage (){
+interface ComponentProps {
+    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+}
+
+export default function RegisterPage ({setUser}: ComponentProps) {
     return (
         <Container>
-            <RegisterForm />
+            <RegisterForm setUser={setUser}/>
         </Container>
     )
 }

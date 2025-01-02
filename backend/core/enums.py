@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class AuthServices(Enum):
+class AuthServices(str, Enum):
     VK = "vk"
     YANDEX = "yandex"
     GITHUB = "github"

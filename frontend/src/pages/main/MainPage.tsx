@@ -1,9 +1,16 @@
-function MainPage() {
+import { Typography } from "antd";
+import { BaseUserInterface } from "../../schemas/user";
 
+
+interface ComponentProps {
+    user: BaseUserInterface | null,
+}
+
+function MainPage({user}: ComponentProps): JSX.Element {
     return (
-        <div>
-            You are logged in
-        </div>
+        <>
+            <Typography.Title>Добро пожаловать, {user?.username}</Typography.Title>
+        </>
     );
 }
 

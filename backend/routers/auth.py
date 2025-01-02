@@ -1,16 +1,23 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Response
 
-from backend.dto.auth_dto import RegisterForm, LoginForm
+from backend.core.enums import AuthServices
+from backend.dto.auth_dto import ExternalServiceUserData, RegisterForm, LoginForm
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.core.dependencies import (
     get_auth_service,
     get_current_user_dependency,
 )
+from backend.utils.auth_requests import AuthRequests
 
 
 router = APIRouter()
+
+
+async def set_cookie_tokens(access_token: str, refresh_token: str, response: Response):
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
 
 
 @router.get("/current_user")
@@ -29,8 +36,7 @@ async def login_user(
     user = await auth_service.authenticate_user(form)
     access_token = await auth_service.create_access_token(form.email)
     refresh_token = await auth_service.create_refresh_token(form.email)
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    await set_cookie_tokens(access_token, refresh_token, response)
     return user
 
 
@@ -62,6 +68,86 @@ async def register_user(
     new_user = await auth_service.register_user(form)
     access_token = await auth_service.create_access_token(form.email)
     refresh_token = await auth_service.create_refresh_token(form.email)
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    await set_cookie_tokens(access_token, refresh_token, response)
     return new_user
+
+
+@router.post("/github")
+async def login_with_github(
+    code: str, 
+    auth_requests: Annotated[AuthRequests, Depends()],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    response: Response
+) -> BaseUserModel:
+    token = await auth_requests.get_github_access_token(code)
+    user = await auth_requests.get_github_user(token)
+    user = await auth_service.auth_github_user(
+        ExternalServiceUserData(
+            username=user["login"],
+            email=user["email"],
+            external_id=user["id"],
+            service=AuthServices.GITHUB.value,
+        )
+    )
+    access_token = await auth_service.create_access_token(user.username)
+    refresh_token = await auth_service.create_refresh_token(user.username)
+
+    await set_cookie_tokens(access_token, refresh_token, response)
+    return user
+
+
+@router.post("/vk")
+async def login_with_vk(
+    code: str, 
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    auth_requests: Annotated[AuthRequests, Depends()],
+    response: Response
+):
+    token, user_id = await auth_requests.get_vk_access_token(code)
+    user = await auth_requests.get_vk_user(token, user_id)
+
+    user = await auth_service.auth_extarnal_service_user(
+        ExternalServiceUserData(
+            username=f"{user["first_name"]} {user['last_name']}",
+            external_id=user["id"],
+            service=AuthServices.VK.value,
+        )
+    )
+    access_token = await auth_service.create_access_token(user.username)
+    refresh_token = await auth_service.create_refresh_token(user.username)
+
+    await set_cookie_tokens(access_token, refresh_token, response)
+    return user
+
+
+@router.post("/yandex")
+async def login_with_yandex(
+    access_token: str, 
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    auth_requests: Annotated[AuthRequests, Depends()],
+    response: Response
+):
+    user = await auth_requests.get_yandex_user(access_token)
+    user = await auth_service.auth_extarnal_service_user(
+        ExternalServiceUserData(
+            username=user["display_name"],
+            email=user["default_email"],
+            external_id=user["id"],
+            service=AuthServices.YANDEX.value,
+        )
+    )
+    access_token = await auth_service.create_access_token(user.username)
+    refresh_token = await auth_service.create_refresh_token(user.username)
+
+    await set_cookie_tokens(access_token, refresh_token, response)
+    return user
+
+
+@router.post("/telegram")
+async def login_with_telegram(
+    code: str, 
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    auth_requests: Annotated[AuthRequests, Depends()],
+    response: Response
+):
+    pass

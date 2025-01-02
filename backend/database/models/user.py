@@ -1,6 +1,7 @@
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.database.models.base import Base
+from backend.database.models.auth_methods import AuthMethod
 
 
 class User(Base):

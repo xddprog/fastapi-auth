@@ -8,8 +8,7 @@ class AuthMethod(Base):
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     service: Mapped[str]
-    external_id: Mapped[str]
-    created_at: Mapped[str]
+    external_id: Mapped[int]
 
     user = relationship("User", back_populates="auth_methods")
     

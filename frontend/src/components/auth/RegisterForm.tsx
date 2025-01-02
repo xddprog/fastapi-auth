@@ -3,16 +3,25 @@ import { useForm } from "antd/es/form/Form";
 import styled from "styled-components";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthServicesGroup from "./OauthServicesGroup";
-import AuthService from "../../api/services/authService";
+import AuthService from '../../api/services/authService';
 import { RegisterUserInterface } from "../../schemas/auth";
+import { BaseUserInterface } from "../../schemas/user";
 
 
-export default function RegisterForm() {
+interface ComponentProps {
+    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+}
+
+
+export default function RegisterForm({setUser}: ComponentProps) {
     const [form] = useForm<RegisterUserInterface>();
     const [, contextHolder] = message.useMessage();
+    const authService = new AuthService();
 
     async function onFinish() {
-        await AuthService.registerUser(await form.validateFields());
+        await authService.registerUser(await form.validateFields()).then((response) => {
+            setUser(response.data);
+        });
     }
 
     return (
@@ -37,7 +46,7 @@ export default function RegisterForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<MailOutlined />} placeholder="Username" />
+                    <Input prefix={<MailOutlined />} placeholder="Username"  size="large"/>
                 </Form.Item>
                 <Form.Item
                     name="email"
@@ -50,7 +59,7 @@ export default function RegisterForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<MailOutlined />} type="email" placeholder="Почта" />
+                    <Input prefix={<MailOutlined />} type="email" placeholder="Почта" size="large"/>
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -62,7 +71,7 @@ export default function RegisterForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" />
+                    <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" size="large" />
                 </Form.Item>
                 <OauthServicesGroup isRegisterForm={true}/>
             </StyledForm>
@@ -81,6 +90,6 @@ const FormContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 420px;
+    width: 450px;
 `;
 
