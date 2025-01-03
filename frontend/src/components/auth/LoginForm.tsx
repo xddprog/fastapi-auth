@@ -1,31 +1,40 @@
-import { Form, Input, message, Typography } from "antd";
+import { Form, Input, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
 import styled from "styled-components";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthServicesGroup from "./OauthServicesGroup";
+import { useNavigate } from "react-router-dom";
+import { LoginUserInterface } from "../../schemas/auth";
+import { AxiosError } from "axios";
 import AuthService from "../../api/services/authService";
-import { BaseUserInterface } from "../../schemas/user";
 
 
 interface ComponentProps {
-    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+    handleError: (error: AxiosError) => void
 }
 
 
-export default function LoginForm({setUser}: ComponentProps) {
-    const [form] = useForm();
-    const [, contextHolder] = message.useMessage();
+export default function LoginForm({ handleError }: ComponentProps) {
+    const [form] = useForm<LoginUserInterface>();
+    const navigate = useNavigate();
+    const authService = new AuthService();
 
     async function onFinish() {
-        await AuthService.loginUser(await form.validateFields());
+        const userForm = await form.validateFields();
+        await authService.checkUserExist(userForm, false).then(() => {
+            navigate(
+                "/verification", 
+                {state: {redirected: true, userForm: userForm}}
+            )
+        }).catch(
+            (error) => handleError(error)
+        );
     }
 
     return (
         <FormContainer>
-            {contextHolder}
             <Typography.Title level={1}>Вход в аккаунт</Typography.Title>
             <StyledForm
-                name="normal_login"
                 initialValues={{
                     remember: true,
                 }}
@@ -63,7 +72,7 @@ export default function LoginForm({setUser}: ComponentProps) {
     );
 }
 
-const StyledForm = styled(Form)`
+const StyledForm = styled(Form<LoginUserInterface>)`
     width: 100%;
     margin-bottom: 10px;
 `;

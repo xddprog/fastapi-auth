@@ -1,7 +1,7 @@
 from sqlalchemy import select, NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from backend.core.config import DatabaseConfig, load_database_config
+from backend.core.config.database_configs import load_database_config
 from backend.database.models.base import Base
 
 class DatabaseConnection:

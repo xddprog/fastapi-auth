@@ -1,17 +1,17 @@
 import styled from "styled-components";
 import LoginForm from "../../components/auth/LoginForm";
-import { BaseUserInterface } from "../../schemas/user";
+import { AxiosError } from "axios";
 
 
 interface ComponentProps {
-    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+    handleError: (error: AxiosError) => void
 }
 
 
-export default function LoginPage({setUser}: ComponentProps) {
+export default function LoginPage({ handleError }: ComponentProps) {
     return (
         <Container>
-            <LoginForm setUser={setUser} />
+            <LoginForm handleError={handleError}/>
         </Container>
     );
 }

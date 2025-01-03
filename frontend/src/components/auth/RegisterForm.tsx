@@ -1,32 +1,38 @@
-import { Form, Input, message, Typography } from "antd";
+import { Form, Input, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
 import styled from "styled-components";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import OauthServicesGroup from "./OauthServicesGroup";
-import AuthService from '../../api/services/authService';
 import { RegisterUserInterface } from "../../schemas/auth";
-import { BaseUserInterface } from "../../schemas/user";
+import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import AuthService from "../../api/services/authService";
 
 
 interface ComponentProps {
-    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+    handleError: (error: AxiosError) => void
 }
 
 
-export default function RegisterForm({setUser}: ComponentProps) {
+export default function RegisterForm({ handleError }: ComponentProps) {
     const [form] = useForm<RegisterUserInterface>();
-    const [, contextHolder] = message.useMessage();
+    const navigate = useNavigate();
     const authService = new AuthService();
 
     async function onFinish() {
-        await authService.registerUser(await form.validateFields()).then((response) => {
-            setUser(response.data);
-        });
+        const userForm = await form.validateFields();
+        await authService.checkUserExist(userForm, true).then(() => {
+            navigate(
+                "/verification", 
+                {state: {redirected: true, userForm: userForm}}
+            )
+        }).catch(
+            (error) => handleError(error)
+        );
     }
 
     return (
         <FormContainer>
-            {contextHolder}
             <Typography.Title level={1}>Регистрация</Typography.Title>
             <StyledForm
                 name="normal_login"

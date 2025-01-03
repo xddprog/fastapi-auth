@@ -1,6 +1,6 @@
-import base64
 from aiohttp import ClientSession
-from backend.core.config import load_github_config, load_vk_config, load_yandex_config
+
+from backend.core.config.oauth_configs import load_github_config, load_vk_config, load_yandex_config
 
 
 class AuthRequests:

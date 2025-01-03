@@ -6,3 +6,8 @@ class AuthServices(str, Enum):
     YANDEX = "yandex"
     GITHUB = "github"
     TELEGRAM = "telegram"
+
+
+class EmailServices(str, Enum):
+    YANDEX = "yandex"
+    GOOGLE = "google"

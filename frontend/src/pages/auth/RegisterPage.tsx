@@ -1,15 +1,17 @@
 import styled from "styled-components"
 import RegisterForm from "../../components/auth/RegisterForm"
-import { BaseUserInterface } from "../../schemas/user"
+import { AxiosError } from "axios"
+
 
 interface ComponentProps {
-    setUser: React.Dispatch<React.SetStateAction<BaseUserInterface | null>>
+    handleError: (error: AxiosError) => void
 }
 
-export default function RegisterPage ({setUser}: ComponentProps) {
+
+export default function RegisterPage({ handleError }: ComponentProps) {
     return (
         <Container>
-            <RegisterForm setUser={setUser}/>
+            <RegisterForm handleError={handleError}/>
         </Container>
     )
 }

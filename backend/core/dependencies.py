@@ -5,11 +5,20 @@ from fastapi import Cookie, Depends, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession  
 
+from backend.core.clients.redis_client import RedisClient
+from backend.core.clients.smtp_clients import SMTPClients
 import backend.services as services
 import backend.repositories as repositories
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 
+
+async def get_redis_client(request: Request) -> RedisClient:
+    return request.app.state.redis_client
+
+
+async def get_smtp_clients(request: Request) -> SMTPClients:
+    return request.app.smtp_clients
 
 async def get_session(
     request: Request,
@@ -43,4 +52,16 @@ async def get_user_service(session=Depends(get_session)):
         repository=repositories.UserRepository(
             session=session
         )
+    )
+
+
+async def get_tfa_service(    
+    session=Depends(get_session),
+    redis_client=Depends(get_redis_client)
+):
+    return services.TwoFactorAuthService(
+        repository=repositories.UserRepository(
+            session=session,
+        ),
+        redis_client=redis_client
     )

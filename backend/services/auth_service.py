@@ -7,7 +7,7 @@ from h11 import Request
 from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
 
-from backend.core.config import load_jwt_config
+from backend.core.config.oauth_configs import load_jwt_config
 from backend.dto.auth_dto import ExternalServiceUserData, LoginForm, RegisterForm
 from backend.dto.user_dto import BaseUserModel
 from backend.database.models.user import User
@@ -33,6 +33,13 @@ class AuthService(BaseService):
         user = await self.repository.get_by_attribute(
             self.repository.model.username, 
             username
+        )
+        return None if not user else user[0]
+    
+    async def get_user_by_email(self, email: str) -> User | None:
+        user = await self.repository.get_by_attribute(
+            self.repository.model.email, 
+            email
         )
         return None if not user else user[0]
     
@@ -93,7 +100,7 @@ class AuthService(BaseService):
         return await self.model_dump(user, BaseUserModel)
 
     async def register_user(self, form: RegisterForm) -> BaseUserModel:
-        user = await self.get_user_by_username(form.username)
+        user = await self.get_user_by_email(form.email)
         if user:
             raise UserAlreadyRegister
 
@@ -119,3 +126,9 @@ class AuthService(BaseService):
         if not user_registered:
             return await self.register_external_service_user(form)
         return user_registered
+
+    async def check_user_in_app(self, form: RegisterForm | LoginForm, is_register: bool) -> bool:
+        user = await self.get_user_by_email(form.email)
+        if user and is_register:
+            raise UserAlreadyRegister
+        return user.username if user else False

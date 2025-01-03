@@ -7,12 +7,12 @@ import { axiosClient } from "../client/axiosClient";
 export default class AuthService {
     public BASE_URL = "/auth";
 
-    public async loginUser(loginData: LoginUserInterface): Promise<AxiosResponse> {
-        return axiosClient.post(`${this.BASE_URL}/login`, loginData);
+    public async loginUser(loginData: LoginUserInterface, code: string): Promise<AxiosResponse> {
+        return axiosClient.post(`${this.BASE_URL}/login`, loginData, {params: {code: code}});
     }
 
-    public async registerUser(registerData: RegisterUserInterface): Promise<AxiosResponse> {
-        return axiosClient.post(`${this.BASE_URL}/register`, registerData);
+    public async registerUser(registerData: RegisterUserInterface, code: string): Promise<AxiosResponse> {
+        return axiosClient.post(`${this.BASE_URL}/register`, registerData, {params: {code: code}});
     }
 
     public async authWithGithub(code: string): Promise<AxiosResponse> {
@@ -25,5 +25,23 @@ export default class AuthService {
 
     public async authWithYandex(code: string): Promise<AxiosResponse> {
         return axiosClient.post(`${this.BASE_URL}/yandex`, {}, {params: {access_token: code}});
+    }
+
+    public async checkUserExist(
+        userForm: RegisterUserInterface | LoginUserInterface, isRegister: boolean
+    ): Promise<AxiosResponse> {
+        return axiosClient.post(
+            `${this.BASE_URL}/check-exist`, 
+            userForm, 
+            {params: {is_register: isRegister}
+        });
+    }
+
+    public async getCurrentUser(): Promise<AxiosResponse> {
+        return axiosClient.get(`${this.BASE_URL}/current_user`);
+    }
+
+    public async logoutUser(): Promise<AxiosResponse> {
+        return axiosClient.delete(`${this.BASE_URL}/logout`);
     }
 }

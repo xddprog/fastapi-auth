@@ -16,7 +16,7 @@ export default function useUserAuthCallback(
         if (service === "yandex") {
             const hashParams = new URLSearchParams(window.location.hash.slice(1))
             const access_token =  hashParams.get("access_token")
-            console.log(access_token)
+            
             if (access_token) {
                 authService.authWithYandex(access_token).then((response) => {
                     setUser(response.data)
