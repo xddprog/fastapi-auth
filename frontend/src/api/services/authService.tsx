@@ -44,4 +44,8 @@ export default class AuthService {
     public async logoutUser(): Promise<AxiosResponse> {
         return axiosClient.delete(`${this.BASE_URL}/logout`);
     }
+
+    public async refreshToken(): Promise<AxiosResponse> {
+        return axiosClient.get(`${this.BASE_URL}/refresh`);
+    }
 }
